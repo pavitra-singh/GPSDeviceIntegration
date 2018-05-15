@@ -1,7 +1,6 @@
 package com.locate365.mixlab.dataPackets.server;
 
 public class LoginMessagePacketResponse {
-
 	
 	private String startBit;
 	private String packetLength;
