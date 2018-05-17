@@ -1,53 +1,59 @@
 package com.locate365.util;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import com.locate365.mixlab.dataFetch.ParseDataPackets;
 
 public class RequestHandler extends Thread{
 
 	private Socket socket;
+	BufferedReader in = null;
+	PrintWriter out = null;
 	
-    RequestHandler( Socket socket )
-    {
+    public RequestHandler(Socket socket, BufferedReader in, PrintWriter out){
         this.socket = socket;
+        this.in = in;
+        this.out =  out;
     }
    
     @Override
-    public void run()
-    {
-        try
-        {
-            System.out.println( "Received a connection" );
+    public void run(){
+    	
+    	while(true){
 
-            // Get input and output streams
-            BufferedReader in = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
-            PrintWriter out = new PrintWriter( socket.getOutputStream() );
+            try{
+                
+            	System.out.println( "Received a connection" );
 
-            // Write out our header to the client
-            out.println( "Locate365MultipleSocketServer 1.0" );
-            out.flush();
-
-            // Echo lines back to the client until the client closes the connection or we receive an empty line
-            String line = in.readLine();
-            while( line != null && line.length() > 0 )
-            {
-                out.println( "Echo: " + line );
-                out.flush();
-                line = in.readLine();
+                String line = in.readLine();
+            	System.out.println("Message from Client" + this.getName() + " : " + line);
+                
+            	if(line.contains("EB")){
+            		//this.socket.close();
+    				//System.out.println("Connection closed");
+            		//save lbs in database
+            		ParseDataPackets.parseLocationDataPacketFromTerminalAndSaveInDatabase(line);
+                	break;
+            	}
+            	String messageToClient = "78 78 0D 01 00 01 8C DD 0D 0A";
+            	out.println(messageToClient);
+            	out.flush();
+            	
+            	
+            	
+            	//this.socket.close();
+				//System.out.println("Connection closed");
+            	//break;
+                
             }
-
-            // Close our connection
-            in.close();
-            out.close();
-            socket.close();
-
-            System.out.println( "Connection closed" );
-        }
-        catch( Exception e )
-        {
-            e.printStackTrace();
-        }
+            catch( Exception e )
+            {
+                e.printStackTrace();
+            }
+        
+    	}
+    	
     }
 }

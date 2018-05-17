@@ -11,6 +11,9 @@ public class Locate365ClientSocket {
 	BufferedReader in = null;
 	PrintWriter out = null;
 	
+	static String loginMessagePacket = "78 78 0D 01 01 23 45 67 89 01 23 45 00 01 8C DD 0D 0A";
+	static String locationDataPacket = "78 78 1F 12 0B 08 1D 11 2E 10 CF 02 7A C7 EB 0C 46 58 49 00 14 8F 01 CC 00 28 7D 00 1F B8 00 03 80 81 0D 0A";
+	
 	public static void main(String[] args){
 		Locate365ClientSocket locate365ClientSocket = new Locate365ClientSocket();
 		locate365ClientSocket.startConnection("10.4.22.143", 8070);
@@ -20,7 +23,7 @@ public class Locate365ClientSocket {
 
 		try {
 
-			System.out.println("Connecting to the server....");
+			System.out.println("Connect to the server....");
 			clientSocket = new Socket(hostName, portNumber);
 
 			//Sending to server
@@ -29,41 +32,25 @@ public class Locate365ClientSocket {
 			// receiving from server
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			
-			String sendMessage, receiveMessage;
-			
+			// the following loop performs the exchange of information between client and request handler
 			while (true) {
 				
-				sendMessage = "78 78 0D 01 01 23 45 67 89 01 23 45 00 01 8C DD 0D 0A";
+				String sendMessage = loginMessagePacket;
+
 				out.println(sendMessage);
 				out.flush();
 				
-				if((receiveMessage = in.readLine()) != null)  
-		        {
-		           //Send location data packet
-					System.out.println(receiveMessage);         
-		        } 
-				
-				
-
+				String receiveMessage = in.readLine();
+				if(receiveMessage.contains("78 78 ")){
+					System.out.println("Message from Server : " +  receiveMessage);
+					//Send location data packet 
+					out.println("LBS From Client" + locationDataPacket);
+					out.flush();
+				}
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	/*public String loginMessagePacket(){
-		
-		LoginMessagePacket loginMessagePacket = new LoginMessagePacket();
-		
-		loginMessagePacket.setStartBit("1");
-		loginMessagePacket.setPacketLength("1");
-		loginMessagePacket.setProtocolNumber("1");
-		loginMessagePacket.setInformationSerialNumber("12");
-		loginMessagePacket.setTerminalId("huhv1869869");
-		loginMessagePacket.setStopBit("1");
-		
-		return loginMessagePacket.toString();
-	}*/
 }

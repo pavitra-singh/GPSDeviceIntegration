@@ -5,6 +5,9 @@ public class Test {
 	public static void main(String[] args) {
 		
 		//hexToBinaryStr("78 78 ");
+		//parseLoginMessagePacket();
+		parseLocationDataPacket();
+		
 	}
 
 	public static String hexToBinaryStr(String hexStr){
@@ -46,7 +49,37 @@ public class Test {
 		String startBit = locationDataPacketStr.substring(0, 6);
 		String packetLength = locationDataPacketStr.substring(6, 9);
 		String protocolNumber = locationDataPacketStr.substring(9, 12);
+		String dateTime = locationDataPacketStr.substring(12, 30);
+		String quantityOfGPSInfoSatellite = locationDataPacketStr.substring(30, 33);
+		String latitude = locationDataPacketStr.substring(33, 45);
+		String longitude = locationDataPacketStr.substring(45, 57);
+		String speed = locationDataPacketStr.substring(57, 60);
+		String courseStatus = locationDataPacketStr.substring(60, 66);
+		String mcc = locationDataPacketStr.substring(66, 72);
+		String mnc = locationDataPacketStr.substring(72, 75);
+		String lac = locationDataPacketStr.substring(75, 81);
+		String cellID = locationDataPacketStr.substring(81, 90);
+		String serialNumber = locationDataPacketStr.substring(90, 96);
+		String errorCheck = locationDataPacketStr.substring(96, 102);
+		String stopBit = locationDataPacketStr.substring(102, 107);
+
 		
+		System.out.println("startBit: " + startBit);
+		System.out.println("Packet Length: " +  packetLength);
+		System.out.println("Protocol Number: " +  protocolNumber);
+		System.out.println("Date Time: " +  dateTime);
+		System.out.println("Quantity of GPS Information Satellites: " +  quantityOfGPSInfoSatellite);
+		System.out.println("Latiude: " + latitude);
+		System.out.println("Longitude: " +  longitude);
+		System.out.println("Speed: " + speed);
+		System.out.println("Course Status: " + courseStatus);
+		System.out.println("mcc: " +  mcc);
+		System.out.println("mnc: " + mnc);
+		System.out.println("lac: " +  lac);
+		System.out.println("Cell Id: " + cellID);
+		System.out.println("Serial Number: " + serialNumber);
+		System.out.println("Error Check: "+ errorCheck);
+		System.out.println("Stop Bit: " + stopBit);
 		
 	}
 	

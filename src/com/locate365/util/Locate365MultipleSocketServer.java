@@ -1,15 +1,16 @@
 package com.locate365.util;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Locate365MultipleSocketServer extends Thread{
+public class Locate365MultipleSocketServer{
 
-	
 	private ServerSocket serverSocket;
     private int port;
-    private boolean running = false;
+    //private boolean running = false;
     
     public Locate365MultipleSocketServer(int port) {
 		super();
@@ -17,50 +18,40 @@ public class Locate365MultipleSocketServer extends Thread{
 	}
     
     
-    public void startServer()
-    {
-        try
-        {
-            serverSocket = new ServerSocket( port );
-            this.start();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
+    public void startServer(){
+		
+    	try{
+    	
+    		// server is listening on port 5056
+    		serverSocket = new ServerSocket(port);
+		
+    		// running infinite loop for getting client request
+    		while (true) {			
+			
+				// socket object to receive incoming client requests
+    			Socket clientSocket = serverSocket.accept();
+				
+				System.out.println("A new client is connected : " + clientSocket);
+				
+				// obtaining input and out streams
+				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));;
+				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+				
+				System.out.println("Assigning new thread for this client");
 
-    public void stopServer()
-    {
-        running = false;
-        this.interrupt();
-    }
-    
-    
-    @Override
-    public void run()
-    {
-        running = true;
-        while( running )
-        {
-            try
-            {
-                System.out.println( "Listening for a connection" );
+				// create a new thread object
+				Thread thread = new RequestHandler(clientSocket, in, out);
 
-                // Call accept() to receive the next connection
-                Socket socket = serverSocket.accept();
-
-                // Pass the socket to the RequestHandler thread for processing
-                RequestHandler requestHandler = new RequestHandler( socket );
-                requestHandler.start();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-    
+				// Invoking the start() method
+				thread.start();
+				System.out.println("RunnableJob is being run by " + thread.getName() + " (" + thread.getId() + ")");
+				
+			}
+			
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
     
     public static void main( String[] args ){
        
@@ -70,7 +61,7 @@ public class Locate365MultipleSocketServer extends Thread{
         Locate365MultipleSocketServer server = new Locate365MultipleSocketServer( port );
         server.startServer();
 
-        // Automatically shutdown in 1 minute
+        /*// Automatically shutdown in 1 minute
         try
         {
             Thread.sleep( 60000 );
@@ -80,6 +71,6 @@ public class Locate365MultipleSocketServer extends Thread{
             e.printStackTrace();
         }
 
-        server.stopServer();
+        server.stopServer();*/
     }
 }
