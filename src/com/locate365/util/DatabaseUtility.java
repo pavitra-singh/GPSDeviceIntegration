@@ -4,14 +4,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class JDBCUtil {
+public class DatabaseUtility {
 
+	private static final String PGSQL_DRIVER = "org.postgresql.Driver";
+	private static final String PGSQL_HOSTNAME = "jdbc:postgresql://127.0.0.1:5432/locate365";
+	private static final String PGSQL_USERNAME = "postgres";
+	private static final String PGSQL_PASSWORD = "admin";
 	
 	public static Connection connectToPostgreSQL() {
 
 		try {
 
-			Class.forName("org.postgresql.Driver");
+			Class.forName(PGSQL_DRIVER);
 
 		} catch (ClassNotFoundException e) {
 
@@ -26,8 +30,8 @@ public class JDBCUtil {
 
 		try {
 
-			connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/locate365", 
-					"postgres", "admin");
+			connection = DriverManager.getConnection(PGSQL_HOSTNAME, 
+					PGSQL_USERNAME, PGSQL_PASSWORD);
 
 		} catch (SQLException e) {
 

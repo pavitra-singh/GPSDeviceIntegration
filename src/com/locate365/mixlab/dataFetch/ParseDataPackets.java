@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.locate365.util.JDBCUtil;
+import com.locate365.util.DatabaseUtility;
 import com.locate365.util.Locate365QueryConstants;
 
 public class ParseDataPackets {
@@ -21,23 +21,10 @@ public class ParseDataPackets {
 		String errorCheck = loginMessagePacketStr.substring(42, 48).trim();
 		String stopBit = loginMessagePacketStr.substring(48, 53).trim();
 		
+		String sql = Locate365QueryConstants.INSERT_INTO_LOGIN_PACKET + "('" + startBit + "','" + packetLength + "','" + protocolNumber + "','" + terminalId + "','"
+                + infoSerialNumber + "','" + errorCheck + "','" + stopBit + "','" + new java.sql.Timestamp(new java.util.Date().getTime()) +"')";
 		
-		Connection connectionObj = JDBCUtil.connectToPostgreSQL();
-		if(connectionObj != null){
-			
-			//save into database
-			Statement stmnt = null;
-	        try {
-				stmnt = connectionObj.createStatement();
-				String sql = Locate365QueryConstants.INSERT_INTO_LOGIN_PACKET + "('" + startBit + "','" + packetLength + "','" + protocolNumber + "','" + terminalId + "','"
-		                + infoSerialNumber + "','" + errorCheck + "','" + stopBit + "','" + new java.sql.Timestamp(new java.util.Date().getTime()) +"')";
-				System.out.println("SQL Query : " +  sql);
-		        exeStatus = stmnt.executeUpdate(sql);
-		        System.out.println("Statement execution statement : " +  exeStatus);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		exeStatus = saveInDatabaseAndReturnExecutionStatus(sql);
 		
 		return exeStatus;
 	}
@@ -81,7 +68,7 @@ public class ParseDataPackets {
 		
 		int exeStatus = 0;
 		
-		Connection connectionObj = JDBCUtil.connectToPostgreSQL();
+		Connection connectionObj = DatabaseUtility.connectToPostgreSQL();
 		if(connectionObj != null){
 			
 			//save into database

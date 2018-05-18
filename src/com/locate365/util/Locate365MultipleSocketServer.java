@@ -22,7 +22,7 @@ public class Locate365MultipleSocketServer{
 		
     	try{
     	
-    		// server is listening on port 5056
+    		// server is listening on port 
     		serverSocket = new ServerSocket(port);
 		
     		// running infinite loop for getting client request
